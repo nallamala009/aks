@@ -1,0 +1,4 @@
+apiVersion: v2
+name: springboot-app
+description: A Helm chart for deploying a Spring Boot application to AKS
+version: 0.1.0

@@ -1,0 +1,40 @@
+trigger:
+- main  # Or the appropriate branch
+
+pr: 
+- none  # Disable PR builds, you can adjust this based on your needs
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'your-image-name'
+  helmReleaseName: 'your-helm-release-name'
+  helmChartPath: 'path/to/helm/chart'
+  aksResourceGroup: 'your-aks-resource-group'
+  aksClusterName: 'your-aks-cluster-name'
+  aksNamespace: 'your-aks-namespace'
+  azureContainerRegistry: 'your-azure-container-registry'
+  azureContainerRegistryUsername: $(ACR_USERNAME)
+  azureContainerRegistryPassword: $(ACR_PASSWORD)
+
+steps:
+- script: |
+    # Build and tag Docker image
+    docker build -t $(azureContainerRegistry)/$(imageName):$(Build.SourceVersion) .
+    docker login $(azureContainerRegistry) -u $(azureContainerRegistryUsername) -p $(azureContainerRegistryPassword)
+    docker push $(azureContainerRegistry)/$(imageName):$(Build.SourceVersion)
+
+  displayName: 'Build and Push Docker Image to Azure Container Registry'
+
+- script: |
+    # Install Helm
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+    # AKS credentials
+    az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName)
+
+    # Helm install or upgrade
+    helm upgrade --install $(helmReleaseName) $(helmChartPath) --namespace $(aksNamespace) --set image.repository=$(azureContainerRegistry)/$(imageName),image.tag=$(Build.SourceVersion)
+
+  displayName: 'Deploy to AKS using Helm'
