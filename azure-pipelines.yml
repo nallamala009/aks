@@ -1,0 +1,38 @@
+trigger:
+- main  # Or the appropriate branch
+
+pr: 
+- none  # Disable PR builds, adjust based on your needs
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  terraformPath: '/usr/local/bin/terraform'  # Path to Terraform binary in the build agent
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'  # Use Python 3.x
+
+- script: |
+    # Install Terraform
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt-get update && sudo apt-get install terraform
+
+  displayName: 'Install Terraform'
+
+- script: |
+      pwd
+    # cd path/to/terraform/config  # Change to your Terraform configuration directory
+    # $(terraformPath) init
+    # $(terraformPath) plan -out=tfplan -input=false
+
+  displayName: 'Terraform Init and Plan'
+
+# - script: |
+#     cd path/to/terraform/config
+#     $(terraformPath) apply -input=false tfplan
+
+#   displayName: 'Terraform Apply'
