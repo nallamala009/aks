@@ -24,11 +24,11 @@ steps:
   displayName: 'Install Terraform'
 
 - script: |
-      pwd
-      ls -ltr
+    pwd
+    ls -ltr
     # cd path/to/terraform/config  # Change to your Terraform configuration directory
-    # $(terraformPath) init
-    # $(terraformPath) plan -out=tfplan -input=false
+    $(terraformPath) init
+    $(terraformPath) plan -out=tfplan -input=false
 
   displayName: 'Terraform Init and Plan'
 
