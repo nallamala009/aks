@@ -24,7 +24,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   service_principal {
-    client_id     = "YOUR_CLIENT_ID"     # Update with your Service Principal client ID
-    client_secret = "YOUR_CLIENT_SECRET" # Update with your Service Principal client secret
+    client_id     = var.client_id
+    client_secret = var.client_secret
   }
 }
