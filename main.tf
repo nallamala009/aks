@@ -1,3 +1,5 @@
+variable "client_id" {}
+variable "client_secret" {}
 provider "azurerm" {
   features {}
 }
