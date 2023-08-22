@@ -24,7 +24,6 @@ steps:
   displayName: 'Install Terraform'
 
 - script: |
-    az login
     # cd path/to/terraform/config  # Change to your Terraform configuration directory
     $(terraformPath) init
     $(terraformPath) plan -out=tfplan -input=false
